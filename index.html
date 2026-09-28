@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fresh Blend – Smoothies</title>
+<style>
+:root{--bg:#fff8f1;--card:#fff;--tx:#2a1f1a;--mu:#7a6a60;--bd:#f0e0d2;--ac:#e8590c;--ok:#2b8a3e;--chip:#fff1e3;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1411;--card:#241c18;--tx:#f5ebe4;--mu:#a8968a;--bd:#3a2d26;--ac:#ff8a4c;--ok:#69db7c;--chip:#33251d}}
+:root[data-theme="dark"]{--bg:#1a1411;--card:#241c18;--tx:#f5ebe4;--mu:#a8968a;--bd:#3a2d26;--ac:#ff8a4c;--ok:#69db7c;--chip:#33251d}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:auto;padding:16px}
+h1{margin:0;font-size:26px}h2{font-size:15px;margin:18px 0 8px}.mu{color:var(--mu);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:8px 13px;font:inherit;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ac);border-color:var(--ac);color:#fff}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.st{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--bd);border-radius:99px;padding:3px 6px}
+.st button{width:30px;height:30px;border-radius:50%;border:0;background:var(--chip);color:var(--tx);font-size:18px;cursor:pointer}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.card.dim{opacity:.55}
+.hd{display:flex;align-items:center;gap:12px;padding:12px;cursor:pointer;width:100%;background:none;border:0;color:inherit;font:inherit;text-align:left}
+.em{font-size:32px}.nm{font-weight:600}.grow{flex:1;min-width:0}
+.ok{color:var(--ok);font-size:13px;font-weight:600}.ms{color:var(--mu);font-size:13px}
+.hr{border:0;background:none;font-size:22px;cursor:pointer;color:var(--ac)}
+.dt{padding:0 14px 14px;border-top:1px solid var(--bd)}
+.dt ul,.dt ol{padding-left:20px;margin:6px 0}.dt li{margin:3px 0}
+.tip{background:var(--chip);border-radius:10px;padding:8px 10px;font-size:14px;margin-top:8px}
+.tg{display:flex;gap:6px;align-items:center;font-size:14px}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--ac)}
+</style></head><body><main>
+<h1>🥤 Fresh Blend</h1><div class="mu">Pick the fresh fruit you have, get smoothies you can make. Tap any smoothie to see the full recipe and calories.</div>
+<h2>What's in your fruit bowl?</h2><div class="chips" id="fr"></div>
+<div class="bar"><div class="st"><button data-a="m">−</button><span id="sv"></span><button data-a="p">+</button></div>
+<label class="tg"><input type="checkbox" id="ro"> Ready to blend only</label>
+<label class="tg"><input type="checkbox" id="fo"> ♥ Favorites</label>
+<button class="chip" data-a="clr">Clear fruit</button></div>
+<h2 id="rh">Smoothies</h2><div id="rl"></div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const F=[['banana','🍌','Banana'],['strawberry','🍓','Strawberry'],['mango','🥭','Mango'],['pineapple','🍍','Pineapple'],['blueberry','🫐','Blueberry'],['cherry','🍒','Cherry'],['apple','🍎','Apple'],['orange','🍊','Orange'],['peach','🍑','Peach'],['watermelon','🍉','Watermelon'],['kiwi','🥝','Kiwi'],['avocado','🥑','Avocado'],['grape','🍇','Grape'],['pear','🍐','Pear'],['lemon','🍋','Lemon'],['coconut','🥥','Coconut']];
+const R=[
+{n:'Strawberry Banana',e:'🍓',t:'5 min',fr:[['strawberry',1,'cup','strawberries, hulled'],['banana',1,'','banana|bananas']],ex:[[.5,'cup','plain yogurt'],[.5,'cup','milk'],[1,'tsp','honey (optional)']],tip:'Freeze the banana slices first for a thick, milkshake-like texture.'},
+{n:'Tropical Sunshine',e:'🍍',t:'5 min',fr:[['mango',1,'cup','mango chunks'],['pineapple',.5,'cup','pineapple chunks'],['orange',1,'','orange, juiced|oranges, juiced']],ex:[[.25,'cup','water'],[.5,'cup','ice']],tip:'Ripe mango should give slightly when pressed and smell sweet at the stem.'},
+{n:'Berry Blast',e:'🫐',t:'5 min',fr:[['blueberry',.5,'cup','blueberries'],['strawberry',.5,'cup','strawberries, hulled'],['cherry',.25,'cup','cherries, pitted']],ex:[[.5,'cup','plain yogurt'],[.25,'cup','milk']],tip:'Berries are packed with antioxidants. Add a spoon of oats to make it more filling.'},
+{n:'Green Kiwi Apple',e:'🥝',t:'5 min',fr:[['kiwi',2,'','kiwi, peeled|kiwis, peeled'],['apple',1,'','apple, cored|apples, cored']],ex:[[1,'handful','fresh spinach'],[.5,'cup','water'],[1,'tsp','honey (optional)']],tip:'Spinach is nearly tasteless once blended, and the fruit hides the green.'},
+{n:'Peach Mango Sunrise',e:'🍑',t:'5 min',fr:[['peach',1,'','peach, pitted|peaches, pitted'],['mango',.5,'cup','mango chunks'],['orange',.5,'','orange, juiced|oranges, juiced']],ex:[[.25,'cup','plain yogurt'],[.5,'cup','ice']],tip:'Use very ripe peaches. The natural sweetness means no added sugar.'},
+{n:'Watermelon Cooler',e:'🍉',t:'3 min',fr:[['watermelon',2,'cup','watermelon cubes, seeds removed'],['lemon',.5,'','lemon, juiced|lemons, juiced']],ex:[[5,'','fresh mint leaves'],[.5,'cup','ice']],tip:'No liquid needed. The melon is mostly water. Serve extra cold.'},
+{n:'Creamy Avocado Banana',e:'🥑',t:'5 min',fr:[['avocado',.5,'','avocado, pitted|avocados, pitted'],['banana',1,'','banana|bananas']],ex:[[1,'cup','milk'],[1,'tbsp','honey'],[.5,'cup','ice']],tip:'Avocado makes it silky and rich, and is a good source of healthy fats.'},
+{n:'Coconut Pineapple Escape',e:'🥥',t:'4 min',fr:[['pineapple',1,'cup','pineapple chunks'],['coconut',.75,'cup','fresh coconut water']],ex:[[.5,'cup','ice']],tip:'Fresh coconut water is lightly sweet and full of electrolytes.'},
+{n:'Grape Blueberry Boost',e:'🍇',t:'4 min',fr:[['grape',1,'cup','seedless grapes'],['blueberry',.5,'cup','blueberries']],ex:[[.5,'cup','plain yogurt'],[.5,'cup','ice']],tip:'Chill the grapes beforehand and you can use less ice.'},
+{n:'Pear Banana Glow',e:'🍐',t:'5 min',fr:[['pear',1,'','pear, cored|pears, cored'],['banana',.5,'','banana|bananas']],ex:[[.5,'cup','milk'],[.5,'tsp','fresh grated ginger'],[1,'tsp','honey (optional)']],tip:'Ginger adds a gentle warmth and helps settle the stomach.'}];
+const CAL={'Strawberry Banana':[50,105,75,61,21],'Tropical Sunshine':[100,41,60,0,0],'Berry Blast':[42,25,22,75,30],'Green Kiwi Apple':[84,95,7,0,21],'Peach Mango Sunrise':[60,50,30,38,0],'Watermelon Cooler':[92,6,1,0],'Creamy Avocado Banana':[120,105,122,64,0],'Coconut Pineapple Escape':[82,34,0],'Grape Blueberry Boost':[104,42,75,0],'Pear Banana Glow':[100,53,61,2,21]};
+const tot=k=>CAL[k].reduce((a,b)=>a+b,0),kc=v=>v?` <span class="ms">· ${v} kcal</span>`:'';
+let sel=new Set(),fav=new Set(),open=null,n=1;
+try{const s=JSON.parse(localStorage.getItem('fb'));if(s){sel=new Set(s.sel);fav=new Set(s.fav)}}catch(e){}
+const save=()=>{try{localStorage.setItem('fb',JSON.stringify({sel:[...sel],fav:[...fav]}))}catch(e){}};
+const q=x=>{x=Math.round(x*4)/4;const w=Math.floor(x),s={0:'',.25:'¼',.5:'½',.75:'¾'}[x-w];return((w?w:'')+s)||'¼'};
+const line=(a,u,name,k)=>{const x=a*k,p=x>1;if(u)return`${q(x)} ${p&&(u=='cup'||u=='handful')?u+'s':u} ${name}`;const[s,pl]=name.split('|');return`${q(x)} ${pl?(p?pl:s):s}`};
+const info=r=>{const miss=r.fr.filter(f=>!sel.has(f[0])).map(f=>F.find(x=>x[0]==f[0])[2]);return{r,miss,have:r.fr.length-miss.length}};
+function render(){
+ $('#fr').innerHTML=F.map(f=>`<button class="chip" data-f="${f[0]}" aria-pressed="${sel.has(f[0])}">${f[1]} ${f[2]}</button>`).join('');
+ $('#sv').textContent=n+(n>1?' servings':' serving');
+ let L=R.map(info);
+ if(sel.size)L.sort((a,b)=>a.miss.length-b.miss.length||b.have-a.have);
+ if($('#ro').checked&&sel.size)L=L.filter(x=>!x.miss.length);
+ if($('#fo').checked)L=L.filter(x=>fav.has(x.r.n));
+ $('#rh').textContent=sel.size?`${L.filter(x=>!x.miss.length).length} ready to blend`:'All smoothies';
+ $('#rl').innerHTML=L.length?L.map(({r,miss,have})=>{
+  const ok=sel.size&&!miss.length,o=open===r.n;
+  const badge=!sel.size?`<span class="ms">${r.t}</span>`:ok?'<span class="ok">✅ Ready to blend</span>':`<span class="ms">Missing: ${miss.join(', ')}</span>`;
+  return`<div class="card ${sel.size&&!have?'dim':''}"><button class="hd" data-o="${r.n}"><span class="em">${r.e}</span><span class="grow"><div class="nm">${r.n}</div><div class="ms">🔥 ${tot(r.n)*n} kcal · ${r.t}${n>1?' · '+n+' servings':''}</div>${sel.size?badge:''}</span><span class="hr" data-h="${r.n}" role="button" aria-label="Favorite">${fav.has(r.n)?'♥':'♡'}</span></button>${o?`<div class="dt"><h2>Ingredients · ${n} serving${n>1?'s':''}</h2><ul>${r.fr.map((f,i)=>`<li>${line(f[1],f[2],f[3],n)}${kc(CAL[r.n][i]*n)}</li>`).join('')}${r.ex.map((x,i)=>`<li>${line(x[0],x[1],x[2],n)}${kc(CAL[r.n][r.fr.length+i]*n)}</li>`).join('')}</ul><div class="tip">🔥 Total: <b>${tot(r.n)*n} kcal</b> for ${n} serving${n>1?'s':''} (${tot(r.n)} per serving). Estimates only.</div><h2>Method</h2><ol><li>Wash and prep the fruit (peel, core, pit or hull as needed).</li><li>Add liquid to the blender first, then the fruit, then ice.</li><li>Blend on high for 45–60 seconds until smooth. Add a splash of liquid if too thick.</li><li>Taste, sweeten if you like, and serve right away.</li></ol><div class="tip">💡 ${r.tip}</div></div>`:''}</div>`}).join(''):'<div class="mu">Nothing here yet. Try picking more fruit or unticking a filter.</div>'}
+document.addEventListener('click',e=>{const t=e.target,h=t.closest('[data-h]'),f=t.closest('[data-f]'),o=t.closest('[data-o]'),a=t.closest('[data-a]');
+ if(h){const k=h.dataset.h;fav.has(k)?fav.delete(k):fav.add(k);save();render();return}
+ if(f){const k=f.dataset.f;sel.has(k)?sel.delete(k):sel.add(k);save();render()}
+ else if(o){open=open===o.dataset.o?null:o.dataset.o;render()}
+ else if(a){const k=a.dataset.a;if(k=='p')n=Math.min(8,n+1);if(k=='m')n=Math.max(1,n-1);if(k=='clr'){sel.clear();save()}render()}});
+$('#ro').onchange=$('#fo').onchange=render;
+render();
+</script></body></html>
